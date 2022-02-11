@@ -83,10 +83,10 @@ def find_color_stripes(img):
     line_image = np.copy(grey) * 0  # creating a blank to draw lines on
     edges = cv.Canny(grey, 10, 250)
     lines = cv.HoughLinesP(edges, rho, theta, threshold, np.array([]),
-                       min_line_length, max_line_gap)
+                           min_line_length, max_line_gap)
 
     for line in lines:
-        for x1,y1,x2,y2 in line:
+        for x1, y1, x2, y2 in line:
             cv.line(line_image, (x1, y1), (x2, y2), (255, 255, 255), 40)
     _, thresh = cv.threshold(line_image, 1, 255, cv.THRESH_BINARY_INV)
     res = cv.bitwise_and(grey, grey, mask=thresh)
@@ -94,23 +94,37 @@ def find_color_stripes(img):
     return x, y, w, h
 
 
-def crop_and_save_image(x, y, w, h, img, file_name):
-    target_dir = "../RepairedImages/"
+def crop_image(x, y, w, h, img):
     # cut a little from the edge to remove remaining edges
     crop = img[y + 20:y + h - 20, x + 20:x + w - 20]
     # crop = img[y:y + h, x:x + w]
-    if crop.size != 0:
-        cv.imwrite(os.path.join(target_dir, file_name + '.jpg'), crop)
+    return crop
+
+
+def save_image(img, file_name):
+    target_dir = "../RepairedImages/"
+    if img.size != 0:
+        cv.imwrite(os.path.join(target_dir, file_name + '.jpg'), img)
 
 
 data, file_names = load_all_images()
 for i, img in enumerate(data):
     print(file_names[i])
+    x, y, w, h = find_grey_area(img)
+    grey_img = crop_image(x, y, w, h, img)
     x, y, w, h = find_color_stripes(img)
-    crop_and_save_image(x, y, w, h, img, file_names[i])
-    # x, y, w, h = detect_edgeless_area(img)
-    # a, b, c, d = find_grey_area(img)
-    # if (w > c or h > d) and w > 0 and h > 0:
-    #     crop_and_save_image(x, y, w, h, img, file_names[i])
-    # elif w > 0 and h > 0:
-    #     crop_and_save_image(a, b, c, d, img, file_names[i])
+    stripes_img = crop_image(x, y, w, h, img)
+    print(grey_img.size)
+    print(stripes_img.size)
+    if grey_img.size < stripes_img.size and grey_img.size < img.size:
+        save_image(grey_img, file_names[i])
+    elif grey_img.size > stripes_img.size and stripes_img.size < img.size:
+        save_image(stripes_img, file_names[i])
+    else:
+        x, y, w, h = detect_edgeless_area(img)
+        edge_img = crop_image(x, y, w, h, img)
+        if edge_img.size < img.size:
+            save_image(edge_img, file_names[i])
+        else:
+            save_image(img, file_names[i])
+
