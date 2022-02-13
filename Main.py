@@ -2,41 +2,29 @@ import cv2 as cv
 import numpy as np
 import os
 import glob
+import Gui
 
-
-def load_image():
-    img_path = 'SAMSUNG SM-J710F (000014600640).jpg'
-    image = cv.imread(img_path, cv.IMREAD_COLOR)
-
-
-def show_image(img):
-    cv.imshow("image", img)
-    k = cv.waitKey(0)
-
-
-def get_pixel_val(x, y, img):
-    px = img[x, y]
-    print(px)
-
+# src_img_dir = '../DamagedImages'
+# target_dir = "../RepairedImages0/"
+src_img_dir = ''
+target_dir = ''
 
 def load_all_images():
     # Enter root directory of all images
-    img_dir = "../DamagedImages/"
-    origin_path = os.path.join(img_dir, '*g')
+    origin_path = os.path.join(src_img_dir, '*g')
     files = glob.glob(origin_path)
     data = []
     for f1 in files:
         img = cv.imread(f1)
         data.append(img)  # store all images in data array
     file_names = []
-    for filename in os.listdir(img_dir):
+    for filename in os.listdir(src_img_dir):
         org_image_name = os.path.splitext(filename)[0]
         file_names.append(org_image_name)
     return data, file_names
 
 
 def find_grey_area(img):
-    img_path = 'image_path'
     # cv.imshow(img_path, img)
     # k = cv.waitKey(0)
     hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
@@ -102,29 +90,35 @@ def crop_image(x, y, w, h, img):
 
 
 def save_image(img, file_name):
-    target_dir = "../RepairedImages/"
     if img.size != 0:
         cv.imwrite(os.path.join(target_dir, file_name + '.jpg'), img)
 
 
-data, file_names = load_all_images()
-for i, img in enumerate(data):
-    print(file_names[i])
-    x, y, w, h = find_grey_area(img)
-    grey_img = crop_image(x, y, w, h, img)
-    x, y, w, h = find_color_stripes(img)
-    stripes_img = crop_image(x, y, w, h, img)
-    print(grey_img.size)
-    print(stripes_img.size)
-    if grey_img.size < stripes_img.size and grey_img.size < img.size:
-        save_image(grey_img, file_names[i])
-    elif grey_img.size > stripes_img.size and stripes_img.size < img.size:
-        save_image(stripes_img, file_names[i])
-    else:
-        x, y, w, h = detect_edgeless_area(img)
-        edge_img = crop_image(x, y, w, h, img)
-        if edge_img.size < img.size:
-            save_image(edge_img, file_names[i])
+def irmain():
+    if not os.path.exists(target_dir):
+        os.makedirs(target_dir)
+    data, file_names = load_all_images()
+    one_time_step = round(len(data)/100)
+    Gui.self.timer.start(100)
+    for i, img in enumerate(data):
+        # if i % one_time_step == 0:
+            # Gui.timerEvent()
+        print(file_names[i])
+        x, y, w, h = find_grey_area(img)
+        grey_img = crop_image(x, y, w, h, img)
+        x, y, w, h = find_color_stripes(img)
+        stripes_img = crop_image(x, y, w, h, img)
+        # print(grey_img.size)
+        # print(stripes_img.size)
+        if grey_img.size < stripes_img.size and grey_img.size < img.size:
+            save_image(grey_img, file_names[i])
+        elif grey_img.size > stripes_img.size and stripes_img.size < img.size:
+            save_image(stripes_img, file_names[i])
         else:
-            save_image(img, file_names[i])
+            x, y, w, h = detect_edgeless_area(img)
+            edge_img = crop_image(x, y, w, h, img)
+            if edge_img.size < img.size:
+                save_image(edge_img, file_names[i])
+            else:
+                save_image(img, file_names[i])
 
