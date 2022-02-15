@@ -2,10 +2,9 @@ import cv2 as cv
 import numpy as np
 import os
 import glob
-import Gui
+from os.path import isfile, join
 
-# src_img_dir = '../DamagedImages'
-# target_dir = "../RepairedImages0/"
+global i
 src_img_dir = ''
 target_dir = ''
 
@@ -17,10 +16,17 @@ def load_all_images():
     for f1 in files:
         img = cv.imread(f1)
         data.append(img)  # store all images in data array
+
+    # searches through subdirectories
+    # for file in glob.glob(origin_path):
+    #     img = cv.imread(file)
+    #     data.append(img)
+
     file_names = []
     for filename in os.listdir(src_img_dir):
-        org_image_name = os.path.splitext(filename)[0]
-        file_names.append(org_image_name)
+        if isfile(join(src_img_dir, filename)):
+            org_image_name = os.path.splitext(filename)[0]
+            file_names.append(org_image_name)
     return data, file_names
 
 
@@ -94,15 +100,11 @@ def save_image(img, file_name):
         cv.imwrite(os.path.join(target_dir, file_name + '.jpg'), img)
 
 
-def irmain():
+def main(data, file_names):
     if not os.path.exists(target_dir):
         os.makedirs(target_dir)
-    data, file_names = load_all_images()
-    one_time_step = round(len(data)/100)
-    Gui.self.timer.start(100)
+    global i
     for i, img in enumerate(data):
-        # if i % one_time_step == 0:
-            # Gui.timerEvent()
         print(file_names[i])
         x, y, w, h = find_grey_area(img)
         grey_img = crop_image(x, y, w, h, img)
@@ -121,4 +123,5 @@ def irmain():
                 save_image(edge_img, file_names[i])
             else:
                 save_image(img, file_names[i])
+
 
