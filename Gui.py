@@ -48,11 +48,6 @@ class ImageRepair(QMainWindow):
         self.initUI()
 
     def initUI(self):
-        cb = QCheckBox('Sort images', self)
-        cb.move(50, 300)
-        cb.setChecked(False)
-        cb.stateChanged.connect(self.sort)
-
         self.lblsource = QLabel(self)
         self.lbltarget = QLabel(self)
         self.lblread = QLabel(self)
@@ -82,11 +77,6 @@ class ImageRepair(QMainWindow):
         self.setGeometry(600, 600, 650, 650)
         self.setWindowTitle('ImageRepair')
         self.btn.clicked.connect(self.on_click)
-
-    def sort(self, state):
-        if state == Qt.Checked:
-            print('TODO')
-            # execute sorter
 
     def on_click(self):
         Main.src_img_dir = self.qlesource.text()
