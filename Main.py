@@ -4,7 +4,6 @@ import os
 import glob
 from os.path import isfile, join
 
-global i
 src_img_dir = '../DamagedImages/'
 target_dir = '../RepairedImages0/'
 
