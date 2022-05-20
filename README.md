@@ -66,5 +66,4 @@ Zur Dokumentation des Codes wurde auch der schriftliche Teil der Studienarbeit h
 
 
 ## Kontakt
-E-Mail: [alexander@melde.net](alexander@melde.net)
-E-Mail: [alexander@melde.net](alexander@melde.net)
+E-Mail: [mail](mail@test.de)
