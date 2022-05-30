@@ -37,33 +37,20 @@ Zur Dokumentation des Codes wurde auch der schriftliche Teil der Studienarbeit h
 3) Studienarbeit als PDF Datei
 
 
-## Installation
+## Code lokal starten
 
 1) Python und Pip installieren
-    1) Python 3.6 [herunterladen](https://www.python.org/downloads/) und installieren (beinhaltet pip)
-2) Virtual Environment erstellen mit allen in der Datei ``requirements.txt`` genannten Modulen
-    1) Das Modul "Virtual Environment" installieren mit ``pip install virtualenv``
-    2) Neue virtuelle Umgebung im Projektordner erstellen mit ``virtualenv venv``
-    3) Virtuelle Umgebung betreten, indem im Ordner ``venv/Scripts/`` ausgeführt wird: 
-        1) Unix (Bash): ``.\activate``
-        2) Windows (PowerShell): ``PowerShell.exe -ExecutionPolicy UNRESTRICTED`` und ``.\Activate.ps1``
-    4) Module in virtuelle Umgebung installieren mit ``pip install -r requirements.txt``
-3) Die Bibliothek ```pafprocess``` kompilieren
-    1) Compiler SWIG installieren
-        1) Unix: ``sudo apt install swig``
-        2) Windows:
-            1) SWIG herunterladen und Installieren [Download](http://www.swig.org/download.html)
-            2) Visual C++ Build Tools von Microsoft installieren via [Direktlink](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=BuildTools&rel=15) oder [Download-Website besuchen](https://visualstudio.microsoft.com/downloads), "Tools für Visual Studio 2017" auswählen und bei "Build Tools für Visual Studio 2017" auf "Herunterladen" drücken
-    1) Im Ordner ``tpe/tf_pose/pafprocess`` die Befehle ``swig -python -c++ pafprocess.i`` und ``python setup.py build_ext --inplace`` ausführen.
+    1) Python 3.10 [herunterladen](https://www.python.org/downloads/) und installieren (beinhaltet pip)
+2) Alle benötigten Module installieren (Numpy, OpenCV, PyQt5)
+3) im Projektordner das Terminal öffnen und den Befehl 'python .\Gui.py' eingeben
 
 
 ## Nutzung der Anwendung
 
-1) .exe Datei öffnen
-2) Pfad für Quellordner (Beispielordner aus dem Repository) und Zielordner einfügen
-3) Auf den Startknopf drücken
-4) Profit
-
+1) dist Ordner herunterladen
+2) Gui.exe Datei öffnen
+3) Pfad für Quellordner (Beispielordner aus dem Repository) und Zielordner eingeben
+4) Auf den Startknopf drücken
 
 ## Kontakt
 E-Mail: [mail](mail@test.de)
