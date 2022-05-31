@@ -7,19 +7,15 @@ from os.path import isfile, join
 src_img_dir = '../DamagedImages/'
 target_dir = '../RepairedImages0/'
 
+
+# Lädt die Bilder aus dem Quellordner und speichert sie in einem Array
 def load_all_images():
-    # Enter root directory of all images
     origin_path = os.path.join(src_img_dir, '*g')
     files = glob.glob(origin_path)
     data = []
     for f1 in files:
         img = cv.imread(f1)
-        data.append(img)  # store all images in data array
-
-    # searches through subdirectories
-    # for file in glob.glob(origin_path):
-    #     img = cv.imread(file)
-    #     data.append(img)
+        data.append(img)
 
     file_names = []
     for filename in os.listdir(src_img_dir):
@@ -29,43 +25,31 @@ def load_all_images():
     return data, file_names
 
 
+# Sucht nach Graubereichen im Bild und gibt die Koordinaten des Bildes ohne den Bereich zurück
 def find_grey_area(img):
-    # cv.imshow(img_path, img)
-    # k = cv.waitKey(0)
     hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
-    # px = hsv[3000, 2900]
-    # print( px )
     low_grey = np.array([0, 0, 127])
     high_grey = np.array([0, 0, 129])
     mask = cv.inRange(hsv, low_grey, high_grey)
-    # res = cv.bitwise_or(img, img, mask=mask)
-
     rgb_mask = cv.cvtColor(mask, cv.COLOR_GRAY2BGR)  # change mask to a 3 channel image
     mask_out = cv.subtract(img, rgb_mask)
 
     mask_out_grey = cv.cvtColor(mask_out, cv.COLOR_BGR2GRAY)
     _, thresh = cv.threshold(mask_out_grey, 1, 255, cv.THRESH_BINARY)
 
-    contours, hierarchy = cv.findContours(thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-    cnt = contours[0]
     x, y, w, h = cv.boundingRect(thresh)
     return x, y, w, h
 
 
+# Sucht nach kantenlosen Bereichen und gibt die Koordinaten des Bildes ohne den Bereich zurück
 def detect_edgeless_area(img):
     grey = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     edged = cv.Canny(grey, 10, 250)
-    # contours, hierarchy = cv.findContours(edged, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-    # cnt = contours[0]
     x, y, w, h = cv.boundingRect(edged)
-    # print('x,y,w,h')
-    # print(x)
-    # print(y)
-    # print(w)
-    # print(h)
     return x, y, w, h
 
 
+# Sucht nach gestreiften Bereichen und gibt die Koordinaten des Bildes ohne den Bereich zurück
 def find_color_stripes(img):
     grey = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     rho = 1  # distance resolution in pixels of the Hough grid
@@ -87,39 +71,20 @@ def find_color_stripes(img):
     return x, y, w, h
 
 
-def extract_thumbnail(img):
-    j = 2
-    start = ''
-    end = ''
-    array = np.array(img)
-    for j in img.size:
-        if img.size[j] == 0xFF:
-            if not start:
-                if img.size[j + 1] == 0xD8:
-                    start = j
-
-                elif img.size[j + 1] == 0xD9:
-                    end = j + 2
-
-    if start and end:
-        array = img[(start, end)]
-        cv.imshow('img_path', array)
-        k = cv.waitKey(0)
-
-
-
+# Das Bild wird mithilfe der Koordinaten der obigen Methoden zugeschnitten
+# Damit der Schnitt auch wirklich den kompletten Bereich entfernt, werden an jeder Seite nochmals 20 Zeilen bzw. Spalten entfernt
 def crop_image(x, y, w, h, img):
-    # cut a little from the edge to remove remaining edges
     crop = img[y + 20:y + h - 20, x + 20:x + w - 20]
-    # crop = img[y:y + h, x:x + w]
     return crop
 
 
+# Zugeschnittene Bilder werden im Zielordner gespeichert
 def save_image(img, file_name):
     if img.size != 0:
         cv.imwrite(os.path.join(target_dir, file_name + '.jpg'), img)
 
 
+# Bilder, deren korrupter Bereich nicht entdeckt wurde, werden in einem separaten Ordner innerhalb des Zielordners gespeichert
 def save_original_image(img, file_name):
     if img.size != 0:
         print(target_dir)
@@ -127,7 +92,8 @@ def save_original_image(img, file_name):
         print(os.path.join(target_dir + 'unchanged', file_name + '.jpg'))
         cv.imwrite(os.path.join(target_dir + 'unchanged', file_name + '.jpg'), img)
 
-
+# Wird von der GUI aufgerufen nachdem die Bilder geladen wurden
+# Jedes Bild wird untersucht und wenn ein korrupter Bereich gefunden wurde, der größer als der Schwellenwert 2000000 ist, zugeschnitten (der Schwellenwert dient dazu, Bilder zu filtern, deren korrupter Bereich nicht gefunden wurde, da die crop Methode immer 20 Zeilen bzw. Spalten am Rand entfernt)
 def main(data, file_names):
     if not os.path.exists(target_dir):
         os.makedirs(target_dir)
@@ -141,9 +107,6 @@ def main(data, file_names):
         grey_img = crop_image(x, y, w, h, img)
         x, y, w, h = find_color_stripes(img)
         stripes_img = crop_image(x, y, w, h, img)
-        # print(grey_img.size)
-        # print(stripes_img.size)
-        # extract_thumbnail(img)
         if grey_img.size < stripes_img.size and grey_img.size < img.size and img.size - grey_img.size > 2000000:
             save_image(grey_img, file_names[i])
         elif grey_img.size > stripes_img.size and stripes_img.size < img.size and img.size - stripes_img.size > 2000000:

@@ -8,6 +8,8 @@ import Main
 
 global win
 
+
+# aktualisiert den Fortschrittsbalken
 class ProgressCounter(QThread):
 
     ProgressChange = pyqtSignal(int)
@@ -22,7 +24,7 @@ class ProgressCounter(QThread):
         self.ProgressChange.emit(round((Main.i + 1) * one_time_step))
 
 
-
+# Lädt die Bilder und startet die Bildverarbeitung jeweils über die Main.py
 class ImageProcessing(QThread):
 
     ImagesLoaded = pyqtSignal(bool)
@@ -42,6 +44,7 @@ class ImageProcessing(QThread):
         win.btn.setDisabled(False)
 
 
+# Initialisiert die GUI
 class ImageRepair(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -59,8 +62,6 @@ class ImageRepair(QMainWindow):
         self.qlesource.setText("../DamagedImages/")
         self.qletarget.setText("../RepairedImages0/")
 
-        # self.qlesource.move(200, 100)
-        # self.qletarget.move(200, 200)
         self.qlesource.setGeometry(200, 100, 300, 25)
         self.qletarget.setGeometry(200, 200, 300, 25)
         self.lblsource.setGeometry(50, 100, 150, 25)
@@ -83,15 +84,11 @@ class ImageRepair(QMainWindow):
         Main.target_dir = self.qletarget.text()
         self.lblread.setText('Loading all images ...')
 
-        # data, file_names = Main.load_all_images()
-
         self.btn.setDisabled(True)
 
         self.improc = ImageProcessing()
         self.improc.ImagesLoaded.connect(self.images_loaded)
         self.improc.start()
-
-        # Main.main(data, file_names)
 
     def images_loaded(self, value):
         if value:
@@ -103,6 +100,7 @@ class ImageRepair(QMainWindow):
         self.pbar.setValue(value)
 
 
+# Öffnet die GUI
 def main():
     app = QApplication(sys.argv)
     global win
