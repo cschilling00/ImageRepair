@@ -42,15 +42,16 @@ Zur Dokumentation des Codes wurde auch der schriftliche Teil der Studienarbeit h
 1) Python und Pip installieren
     1) Python 3.10 [herunterladen](https://www.python.org/downloads/) und installieren (beinhaltet pip)
 2) Alle benötigten Module installieren (Numpy, OpenCV, PyQt5)
-3) im Projektordner das Terminal öffnen und den Befehl 'python .\Gui.py' eingeben
+3) im Projektordner das Terminal öffnen und den Befehl 'python ./Gui.py' eingeben
 
 
 ## Nutzung der Anwendung
 
 1) dist Ordner herunterladen
 2) Gui.exe Datei öffnen
-3) Pfad für Quellordner (Beispielordner aus dem Repository) und Zielordner eingeben
+3) Pfad für Quellordner (z.B. Beispielordner aus dem Repository) und Zielordner eingeben
 4) Auf den Startknopf drücken
 
 ## Kontakt
-E-Mail: [mail](mail@test.de)
+E-Mail: [Email Kraft](elvirakraft@yahoo.de)
+E-Mail: [Email Schilling](cassandras00@aol.com)
