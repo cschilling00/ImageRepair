@@ -4,25 +4,29 @@ import os
 import glob
 from os.path import isfile, join
 
-src_img_dir = '../DamagedImages/'
-target_dir = '../RepairedImages0/'
+
+src_img_dir = '../DamagedImage/'
+target_dir = '../RepairedImage0/'
 
 
 # Lädt die Bilder aus dem Quellordner und speichert sie in einem Array
 def load_all_images():
-    origin_path = os.path.join(src_img_dir, '*g')
-    files = glob.glob(origin_path)
-    data = []
-    for f1 in files:
-        img = cv.imread(f1)
-        data.append(img)
+    if os.path.exists(src_img_dir):
+        origin_path = os.path.join(src_img_dir, '*g')
+        files = glob.glob(origin_path)
+        data = []
+        for f1 in files:
+            img = cv.imread(f1)
+            data.append(img)
 
-    file_names = []
-    for filename in os.listdir(src_img_dir):
-        if isfile(join(src_img_dir, filename)):
-            org_image_name = os.path.splitext(filename)[0]
-            file_names.append(org_image_name)
-    return data, file_names
+        file_names = []
+        for filename in os.listdir(src_img_dir):
+            if isfile(join(src_img_dir, filename)):
+                org_image_name = os.path.splitext(filename)[0]
+                file_names.append(org_image_name)
+        return data, file_names
+    else:
+        return False
 
 
 # Sucht nach Graubereichen im Bild und gibt die Koordinaten des Bildes ohne den Bereich zurück
@@ -94,7 +98,7 @@ def save_original_image(img, file_name):
 
 # Wird von der GUI aufgerufen nachdem die Bilder geladen wurden
 # Jedes Bild wird untersucht und wenn ein korrupter Bereich gefunden wurde, der größer als der Schwellenwert 2000000 ist, zugeschnitten (der Schwellenwert dient dazu, Bilder zu filtern, deren korrupter Bereich nicht gefunden wurde, da die crop Methode immer 20 Zeilen bzw. Spalten am Rand entfernt)
-def main(data, file_names):
+def main_processing(data, file_names):
     if not os.path.exists(target_dir):
         os.makedirs(target_dir)
     if not os.path.exists(target_dir + 'unchanged'):

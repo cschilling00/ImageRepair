@@ -1,10 +1,9 @@
-from PyQt5.QtWidgets import (QMainWindow, QProgressBar, QCheckBox, QLineEdit,
-                             QPushButton, QApplication, QLabel)
+from PyQt5.QtWidgets import (QMainWindow, QProgressBar, QLineEdit,
+                             QPushButton, QApplication, QLabel, QMessageBox)
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtCore import Qt
 import sys
 import time
-import Main
 
 global win
 
@@ -15,8 +14,10 @@ class ProgressCounter(QThread):
     ProgressChange = pyqtSignal(int)
 
     def run(self):
+        import Main
         print('in run')
         while (Main.i + 1) * one_time_step < 100:
+            print(Main.i)
             print("in while")
             print(round((Main.i + 1) * one_time_step))
             self.ProgressChange.emit(round((Main.i + 1) * one_time_step))
@@ -30,19 +31,25 @@ class ImageProcessing(QThread):
     ImagesLoaded = pyqtSignal(bool)
 
     def run(self):
-        data, file_names = Main.load_all_images()
-        self.ImagesLoaded.emit(True)
-        steps = len(data)
-        global one_time_step
-        one_time_step = 100 / steps
+        import Main
 
-        ProgressCounter.prog = ProgressCounter()
-        ProgressCounter.prog.ProgressChange.connect(win.on_progress_change)
-        ProgressCounter.prog.start()
+        if not Main.load_all_images():
+            self.ImagesLoaded.emit(False)
+            print("ImageProcessing Images Loaded")
+            print(self.ImagesLoaded)
+        else:
+            data, file_names = Main.load_all_images()
+            self.ImagesLoaded.emit(True)
+            steps = len(data)
+            global one_time_step
+            one_time_step = 100 / steps
 
-        Main.main(data, file_names)
-        win.btn.setDisabled(False)
+            ProgressCounter.prog = ProgressCounter()
+            ProgressCounter.prog.ProgressChange.connect(win.on_progress_change)
+            ProgressCounter.prog.start()
 
+            Main.main_processing(data, file_names)
+            win.btn.setDisabled(False)
 
 # Initialisiert die GUI
 class ImageRepair(QMainWindow):
@@ -54,8 +61,8 @@ class ImageRepair(QMainWindow):
         self.lblsource = QLabel(self)
         self.lbltarget = QLabel(self)
         self.lblread = QLabel(self)
-        self.lblsource.setText('Enter source directory:')
-        self.lbltarget.setText('Enter target directory:')
+        self.lblsource.setText('Quellordner als Pfad angeben:')
+        self.lbltarget.setText('Zielordner als Pfad angeben:')
 
         self.qlesource = QLineEdit(self)
         self.qletarget = QLineEdit(self)
@@ -80,6 +87,7 @@ class ImageRepair(QMainWindow):
         self.btn.clicked.connect(self.on_click)
 
     def on_click(self):
+        import Main
         Main.src_img_dir = self.qlesource.text()
         Main.target_dir = self.qletarget.text()
         self.lblread.setText('Loading all images ...')
@@ -91,8 +99,15 @@ class ImageRepair(QMainWindow):
         self.improc.start()
 
     def images_loaded(self, value):
-        if value:
-            self.lblread.setText("")
+        self.lblread.setText("")
+        if not value:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("Der angegebene Quellordner existiert nicht!")
+            msg.setWindowTitle("Warnung")
+            msg.setStandardButtons(QMessageBox.Retry)
+            retval = msg.exec_()
+            win.btn.setDisabled(False)
 
     def on_progress_change(self, value):
         print("value change")
