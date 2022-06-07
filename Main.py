@@ -4,10 +4,12 @@ import os
 import glob
 from os.path import isfile, join
 
-
 src_img_dir = '../DamagedImage/'
 target_dir = '../RepairedImage0/'
+progressCounter = 0
 
+def init():
+    pass
 
 # Lädt die Bilder aus dem Quellordner und speichert sie in einem Array
 def load_all_images():
@@ -96,6 +98,7 @@ def save_original_image(img, file_name):
         print(os.path.join(target_dir + 'unchanged', file_name + '.jpg'))
         cv.imwrite(os.path.join(target_dir + 'unchanged', file_name + '.jpg'), img)
 
+
 # Wird von der GUI aufgerufen nachdem die Bilder geladen wurden
 # Jedes Bild wird untersucht und wenn ein korrupter Bereich gefunden wurde, der größer als der Schwellenwert 2000000 ist, zugeschnitten (der Schwellenwert dient dazu, Bilder zu filtern, deren korrupter Bereich nicht gefunden wurde, da die crop Methode immer 20 Zeilen bzw. Spalten am Rand entfernt)
 def main_processing(data, file_names):
@@ -103,9 +106,9 @@ def main_processing(data, file_names):
         os.makedirs(target_dir)
     if not os.path.exists(target_dir + 'unchanged'):
         os.mkdir(target_dir + 'unchanged')
-
-    global i
     for i, img in enumerate(data):
+        global progressCounter
+        progressCounter = i
         print(file_names[i])
         x, y, w, h = find_grey_area(img)
         grey_img = crop_image(x, y, w, h, img)

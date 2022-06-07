@@ -1,38 +1,34 @@
 from PyQt5.QtWidgets import (QMainWindow, QProgressBar, QLineEdit,
                              QPushButton, QApplication, QLabel, QMessageBox)
 from PyQt5.QtCore import QThread, pyqtSignal
-from PyQt5.QtCore import Qt
 import sys
 import time
+import Main
 
 global win
 
 
+
 # aktualisiert den Fortschrittsbalken
 class ProgressCounter(QThread):
-
     ProgressChange = pyqtSignal(int)
 
     def run(self):
-        import Main
         print('in run')
-        while (Main.i + 1) * one_time_step < 100:
-            print(Main.i)
+        while (Main.progressCounter + 1) * one_time_step < 100:
+            print(Main.progressCounter)
             print("in while")
-            print(round((Main.i + 1) * one_time_step))
-            self.ProgressChange.emit(round((Main.i + 1) * one_time_step))
+            print(round((Main.progressCounter + 1) * one_time_step))
+            self.ProgressChange.emit(round((Main.progressCounter + 1) * one_time_step))
             time.sleep(1)
-        self.ProgressChange.emit(round((Main.i + 1) * one_time_step))
+        self.ProgressChange.emit(round((Main.progressCounter + 1) * one_time_step))
 
 
 # Lädt die Bilder und startet die Bildverarbeitung jeweils über die Main.py
 class ImageProcessing(QThread):
-
     ImagesLoaded = pyqtSignal(bool)
 
     def run(self):
-        import Main
-
         if not Main.load_all_images():
             self.ImagesLoaded.emit(False)
             print("ImageProcessing Images Loaded")
@@ -50,6 +46,7 @@ class ImageProcessing(QThread):
 
             Main.main_processing(data, file_names)
             win.btn.setDisabled(False)
+
 
 # Initialisiert die GUI
 class ImageRepair(QMainWindow):
@@ -119,6 +116,7 @@ class ImageRepair(QMainWindow):
 def main():
     app = QApplication(sys.argv)
     global win
+    Main.init()
     win = ImageRepair()
     win.show()
     sys.exit(app.exec_())
