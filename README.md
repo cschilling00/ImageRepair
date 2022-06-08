@@ -5,7 +5,7 @@ _Studienarbeit_
 <tr><th>Autorin</th><td>Elvira Kraft (3653393)</td></tr>
 <tr><th>Autorin</th><td>Cassandra Schilling (5919209)</td></tr>
 <tr><th>Betreuer</th><td>M.Sc. Jonas Fritzsch, DHBW Stuttgart</td></tr>
-<tr><th>Studiengang/Kurs</th><td>B. Sc. Informatik TINF19D</td></tr>
+<tr><th>Studiengang/Kurs</th><td>Informatik/ TINF19D</td></tr>
 <tr><th>Titel der Arbeit</th><td>Entwicklung einer Applikation zur Erkennung und Bearbeitung fehlerhafter Bilder</td></tr>
 <tr><th>Anlass</th><td>Studienarbeit, 3. Studienjahr</td></tr>
 <tr><th>Bearbeitungszeitraum</th><td>26.09.2021 - 10.06.2022</td></tr>
@@ -32,9 +32,9 @@ Der im Rahmen der Studienarbeit geschriebene Quelltext wurde in diesem GitHub Re
 Zur Dokumentation des Codes wurde auch der schriftliche Teil der Studienarbeit hier hochgeladen.
 
 **Inhalt dieses Repository:**
-1) Quellcode zur Studienarbeit
+1) Schriftliche Ausarbeitung als PDF
 2) Ordner "Beispielbilder", der beschädigte Beispielbilder enthält
-3) Studienarbeit als PDF Datei
+3) Quellcode zur Anwendung ImageRepair
 4) Ordner "dist", der eine .exe Datei enthält
 
 
