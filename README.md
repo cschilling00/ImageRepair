@@ -50,7 +50,7 @@ Zur Dokumentation des Codes wurde auch der schriftliche Teil der Studienarbeit h
 
 1) dist Ordner herunterladen und entpacken
 2) Gui.exe Datei öffnen
-3) Pfad für Quellordner (z.B. Beispielordner aus dem Repository) und Zielordner eingeben
+3) Pfad für Quellordner (z.B. Beispielordner aus dem Repository) und Zielordner eingeben (Pfad darf keine Umlaute oder Sonderzeichen enthalten!)
 4) Auf den Startknopf drücken
 
 ## Kontakt
